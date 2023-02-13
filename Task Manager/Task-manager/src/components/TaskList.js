@@ -1,15 +1,32 @@
-import React, { useContext } from "react";
+import React, {  useContext, useEffect, useState } from "react";
+
 import { TaskListContext } from "../contexts/TaskListContext";
+
 import Task from "./Task";
 
 const TaskList = () => {
+
   const { tasks } = useContext(TaskListContext);
+
+  const[displayTasks,setDisplayTasks] = useState([]);
+  
+
+  useEffect(() => {
+    fetch("http://localhost:8000/tasks").then((res) => {
+        return res.json();
+    }).then((resp) => {
+        setDisplayTasks(resp);
+    }).catch((err) => {
+        console.log(err.message);
+    })
+}, [])
+
 
   return (
     <div>
-      {tasks.length ? (
+      {displayTasks.length ? (
         <ul className="list">
-          {tasks.map(task => {
+          {displayTasks.map(task => {
             return <Task task={task} key={task.id} />;
           })}
         </ul>
@@ -21,3 +38,4 @@ const TaskList = () => {
 };
 
 export default TaskList;
+
